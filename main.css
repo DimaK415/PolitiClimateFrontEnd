@@ -14,8 +14,8 @@
     -moz-transition: font-size 1s ease;
     -o-transition: font-size 1s ease;
     transition: font-size 1s ease;
-    transition: opacity 1s;
-    -webkit-transition: opacity 1s;
+    transition: opacity .5s;
+    -webkit-transition: opacity .5s;
 }
 
 .labels:hover {
@@ -26,9 +26,14 @@
   opacity: 0;
 }
 
+.deselected {
+  opacity:.5;
+}
+
 /* BARS GRADIENT */
 .start_blue {
     stop-color: #222725;
+    /*stop-opacity: .99;*/
 }
 .middle_blue {
     stop-color: #2C3D55;
@@ -41,6 +46,7 @@
 
 .start_red {
     stop-color: #222725;
+    /*stop-opacity: .99;*/
 }
 .middle_red {
     stop-color: #5E0812;
@@ -50,6 +56,15 @@
     stop-color: #5E0812;
     stop-opacity: .93;
 }
+
+/*.rbars {
+  ry:5;
+}
+
+.bbars {
+  ry:5;
+}*/
+
 
 .ticks {
     opacity: .6;
@@ -62,6 +77,8 @@
 .track-overlay {
   stroke-linecap: round;
 }
+
+
 
 .track {
   stroke: #000;

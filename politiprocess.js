@@ -59,7 +59,7 @@ function transitions(bars, text, update) {
     if (initialLoad){
     
     t2 = d3.transition()
-            .duration(10000)
+            .duration(100)
             .ease(d3.easeBounce);
     }else{
         t2 = d3.transition()
@@ -94,13 +94,10 @@ function initTopTen(ajaxSettings){
     $.ajax(ajaxSettings).done(function (data) {
 
 
-
     for (var color in data) {
         var bdata = data['blue'];
         var rdata = data['red'];
         }
-
-    termsData = {red:data['red'], blue:data['blue']}
 
         var tenBlue = [];
         var tenRed  = [];
@@ -140,6 +137,7 @@ function initTopTen(ajaxSettings){
                 .append('rect')
                 .attr('class', 'rbars')
                 .attr('y', function(d, i) { return (i * 9) + '%'; })
+                .attr('r', '15')
                 .attr('x', '50%')
                 .attr('height', '8%')
                 .attr("fill", "url(#redGradient)")
@@ -154,7 +152,10 @@ function initTopTen(ajaxSettings){
                 .attr('class','labels')
                 .classed('load', true)
                 .attr('x', '50%')
-                .attr('y', function(d, i) { return (i * 9) + 6 + '%'; });
+                .attr('y', function(d, i) { return (i * 9) + 6 + '%'; })
+                .on('click', function () {
+                    examineTermEnter(d3.select(this), bdata, 'blue')
+                    });
 
     red_texts  = barsFrame.append('g').attr('class', 'redLabels').selectAll('text')
                 .data(tenRed)
@@ -166,12 +167,13 @@ function initTopTen(ajaxSettings){
                 .attr('x', '50%')
                 .attr('y', function(d, i) { return (i * 9) + 6 + '%'; })
                 .on('click', function () {
-                    examineTermEnter(d3.select(this, termsData))
+                    examineTermEnter(d3.select(this), rdata, 'red')
                     });
 
-        
         updateTen(ajaxSettings)
-})}
+
+}).fail(function() {console.alert("Sorry.  Can't access Data :(")})
+}
 
 function initSlider(times) {
 
@@ -243,7 +245,6 @@ function initSlider(times) {
                     .call(d3.drag()
                         .on("drag", dragmove)
                         .on("end", updateTen));
-
 
     var sliderDateSVG = d3.select(".slider_frame").append('text')
                     .attr('class', 'date_text')
@@ -344,8 +345,6 @@ function updateTen(){
     $.ajax(ajaxSettings).done(function (data) {
 
 
-    data = data
-
     for (var color in data) {
         var bdata = data['blue'];
         var rdata = data['red'];
@@ -427,17 +426,162 @@ function updateTen(){
 
 })}
 
-function examineTermEnter(term, termsData) {
-    console.log(termsData)
-    console.log(term.datum())
-    d3.selectAll(".labels")
+function examineTermEnter(term, termsData, color) {
+
+    for (x in termsData){
+      if (term.datum().term == termsData[x][0].term){
+        var termData = termsData[x]
+      }
+    };
+
+    d3.select('.slider_frame')
+    .transition(t3)
+    .attr('y', "110%");
+
+    d3.select("#rbarsgroup").selectAll('rect')
+    // .classed('deselected', true)
+    .transition()
+    .attr('x', '80%');
+
+    d3.select("#bbarsgroup").selectAll('rect')
+    // .classed('deselected', true)
+    .transition()
+    .attr('x', '-20%');
+
+    blue_texts
+    .classed('deselected', true)
+    .transition()
+    .attr('x', "10%");
+    
+    red_texts
+    .classed('deselected', true)
+    .transition()
+    .attr('x', "90%");
+
+    term.classed('deselected', false);
+
+    if (color == 'red'){
+        var gradient = "url(#redGradient)";
+    }else{
+        var gradient = "url(#blueGradient)";
+    };
+
+    console.log(termData)
+
+        termValues = [];
+            for (value in termData){
+                termValues.push(termData[value]['score'])
+            }
+        
+        termScale = d3.scaleLinear()
+            .domain([Math.min(... termValues), Math.max(... termValues)])
+            .range([25, 50])
+            .clamp(true);
+
+    trbars = barsFrame.append('g').attr('id', 'tbarsgroup').selectAll('svg')
+                .data(termData)
+                .enter()
+                .append('rect')
+                .attr('class', 'tbars')
+                .attr('y', function(d, i) { return (i * 9) + '%'; })
+                .attr('x', '50%')
+                .attr('height', '8%')
+                .attr('width', '0px')
+                .attr("fill", gradient)
+                .exit();
+
+    tlbars = barsFrame.append('g').attr('id', 'tbarsgroup').selectAll('svg')
+                .data(termData)
+                .enter()
+                .append('rect')
+                .attr('class', 'tbars')
+                .attr('y', function(d, i) { return (i * 9) + '%'; })
+                .attr('x', '-50%')
+                .attr('transform', 'scale(-1,1)')
+                .attr('height', '8%')
+                .attr('width', '0px')
+                .attr("fill", gradient)
+                .exit();
+
+    d3.selectAll("#tbarsgroup").selectAll('rect')
+        .data(termData)
+        .transition(t)
+        .delay(function(d, i) { return i * del; })
+        .attr('width', function(d) {return Math.floor(termScale(d.score))/2 + '%'; });
 
 
+    topicTerms = barsFrame.append('g').attr('class', 'termLabels').selectAll('text')
+                .data(termData)
+                .enter()
+                .append('text')
+                .text(function(d) { return d.term; })
+                .attr('class','labels')
+                .classed('load', true)
+                .attr('x', '50%')
+                .attr('y', function(d, i) { return (i * 9) + 6 + '%'; });
 
-    // .transition()
-    // .delay(function(d, i) { return i * del/4; })
-    // .attr('x', '50%')
-    // .style('opacity', '0')
+
+    topicTerms.classed('load', true)
+            .transition(t3)
+            .on('end', function(d){ 
+                topicTerms.data(termData)
+                .text(function(d) { return d.term; })
+                .classed('load', false)
+                })
+            .transition(t2)
+            .delay(function(d, i) { return i * del; })
+
+
+    // d3.select("#rbarsgroup").selectAll('rect')
+    //     .data(newRed)
+    //     .transition(t)
+    //     .delay(function(d, i) { return i * del; })
+    //     .attr('width', function(d) {return Math.floor(newrscale(d.score)) + '%'; });
+
+
+    // d3.selectAll(".labels")
+    //     .classed('load', true)
+    //     .transition()
+    //     .delay(function(d, i) { return i * del/12; })
+    //     .attr('x', '50%')
+    //     .style('opacity', '0')
+    //     .style('font-size', '0px')
+
+    // d3.selectAll('.rbars')
+    //     .transition()
+    //     .delay(function(d, i) { return i * del/2; })
+    //     .attr('width', '0%')
+
+    // d3.selectAll('.bbars')
+    //     .transition()
+    //     .delay(function(d, i) { return i * del/2; })
+    //     .attr('width', '0%')
+
+    //     termValues = [];
+    //         for (value in termData){
+    //             termValues.push(termData[value]['score'])
+    //         }
+        
+    //     termScale = d3.scaleLinear()
+    //         .domain([Math.min(... termValues), Math.max(... termValues)])
+    //         .range([25, 75])
+    //         .clamp(true);
+
+    // if (color == 'red'){
+
+    //     d3.select("#rbarsgroup").selectAll('rect')
+    //     .data(termData)
+    //     // .attr('y', function(d, i) { return (i * 9) + '%'; })
+    //     .transition()
+    //     .delay(450)
+    //     .attr('x', function(d) {return (200 - Math.floor(termScale(d.score)))/4 + '%';})
+    //     // .attr('x', '0%')
+    //     .attr('width', function(d) {return Math.floor(termScale(d.score))/2 + '%'; });
+
+
+    // }
+
+
 
 
 
