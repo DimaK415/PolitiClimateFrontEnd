@@ -11,14 +11,14 @@ body {
 
 .title {
     fill: floralwhite;
-    font: 7em monospace;
+    font: 8vmin monospace;
     font-variant: petite-caps;
 }
 
 
 .labels {
     fill: floralwhite;
-    font: 2.5em monospace;
+    font: 4vmin monospace;
     font-variant: petite-caps;
     text-anchor: middle;
     -webkit-transition: font-size 1s ease;
@@ -30,15 +30,15 @@ body {
 }
 
 .labels.loader{
-  font-size:4em;
+  font-size:3.5vmin;
 }
 
 .labels.header{
-  font-size:1.5em;
+  font-size: 2vmin;
 }
 
 .labels.topics:hover {
-    font-size: 3em;
+    font-size: 4.5vmin;
 }
 
 .labels.topics {
@@ -96,7 +96,7 @@ body {
 .ticks {
     opacity: .6;
     font-family: monospace;
-    font-size: 15px;
+    font-size: 1.9vmin;
 }
 
 .track,
@@ -133,5 +133,5 @@ body {
 .date_text {
     opacity: .6;
     font-family: monospace;
-    font-size: 4em;
+    font-size: 7vmin;
 }

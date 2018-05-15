@@ -19,9 +19,6 @@ initHeaderBar();
 
 initLoader();
 
-// initTopTen(ajaxSettings);
-// initGradient();
-// initSlider(time.times);
 })
 
 //////////////////////////
@@ -42,11 +39,13 @@ function getTermsAjaxSettings(DATE, async=true, crossDomain=true, method='GET'){
 
     var settings = {
         "async": true,
-        "crossDomain": true,
-        "url": "http://127.0.0.1:5000/politimoment/" + DATE,
+        "url": "http://34.215.237.208/politimoment/" + DATE,
         "method": "GET",
+        "xhrFields": {
+            "withCredentials": false
+                    },
         "headers":    {
-            "Content-Type": "application/json",
+            "Content-Type": "text/plain",
             "Cache-Control": "no-cache",
                     }
         }
@@ -102,7 +101,6 @@ d3.select('.loader_box').append('text')
     .text('Reading Articles')
     .attr('x', '50%')
     .attr('y', '62%')
-    .style('font-size', '4em')
     .attr('text-anchor', 'middle')
     .attr('class', 'labels loader')
     .style('opacity', '0')
@@ -159,14 +157,14 @@ function initHeaderBar(){
     headerBar.append('text')
     .text('PolitiClimate').attr('class', 'title')
     .attr('x', '50%')
-    .attr('y', '8.5%')
+    .attr('y', '7%')
     .attr('text-anchor', 'middle')
     
     headerBar.append('text')
     .text('A News Media Bot Written by Dima Karpa')
     .attr('class', 'labels header')
     .attr('font-size', '1em')
-    .attr('x', '15%')
+    .attr('x', '20%')
     .attr('y', '8.5%')
     .attr('text-anchor', 'middle')
     
@@ -517,12 +515,12 @@ function updateTen(){
 
         newbscale = d3.scaleLinear()
             .domain([Math.min(... blueValues), Math.max(... blueValues)])
-            .range([25, 50])
+            .range([35, 50])
             .clamp(true);
 
         newrscale = d3.scaleLinear()
             .domain([Math.min(... redValues), Math.max(... redValues)])
-            .range([25, 50])
+            .range([35, 50])
             .clamp(true);
 
         newbcscale = d3.scaleLinear()
@@ -635,7 +633,7 @@ function examineTermEnter(term, termsData, color) {
     // Create scale from new array
     termScale = d3.scaleLinear()
         .domain([Math.min(... termValues), Math.max(... termValues)])
-        .range([25, 50])
+        .range([40, 50])
         .clamp(true);
 
     // Assign new bar widths and colors
@@ -657,7 +655,7 @@ function examineTermEnter(term, termsData, color) {
             .delay(function(d, i) { return i * del; })
 
     d3.select('.termLabel').transition()
-            .style('font-size', '5em')
+            .style('font-size', '6vmin')
             .attr('y', '7%')
 
     termMode = true
